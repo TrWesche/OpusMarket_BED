@@ -1,0 +1,91 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema",
+    "$id": "http://example.com/example.json",
+    "type": "object",
+    "title": "The root schema",
+    "description": "The root schema comprises the entire JSON document.",
+    "default": {},
+    "examples": [
+        {
+            "order": {
+                "payment_id": "ABCD1234",
+                "products": [
+                    {
+                        "id": 1,
+                        "quantity": 1,
+                        "modifier_id": 3,
+                        "coupon_id": 1
+                    }
+                ]
+            }
+        }    
+    ],
+    "required": [
+        "order"
+    ],
+    "properties" : {
+        "order": {
+            "type": "object",
+            "required": [
+                "products"
+            ],
+            "properties": {
+                "payment_id": {
+                    "$id": "#/properties/payment_id",
+                    "type": "string",
+                    "title": "The payment_id schema",
+                    "description": "An explanation about the purpose of this instance.",
+                    "default": "",
+                    "examples": [
+                        "ABCD1234"
+                    ]
+                },
+                "products": {
+                    "$id": "#/properties/products",
+                    "type": "array",
+                    "items": {"$ref": "#/definitions/product"}
+                }
+            }
+        }
+    },
+    "definitions": {
+        "product": {
+            "type": "object",
+            "required": [
+                "id",
+                "quantity"
+            ],
+            "properties": {
+                "id": {
+                    "type": "integer",
+                    "title": "Product Identifier",
+                    "description": "The ID from the associated product",
+                    "minimum": 1,
+                    "examples": [ 10 ]
+                },
+                "quantity": {
+                    "type": "integer",
+                    "title": "Product Quantity",
+                    "description": "The quantity of the associated product ordered",
+                    "minLength": 1,
+                    "examples": [ 1 ]
+                },
+                "modifier_id": {
+                    "type": "integer",
+                    "title": "Modifier Identifier",
+                    "description": "The ID from the associated modifier",
+                    "minimum": 1,
+                    "examples": [3]
+                },
+                "coupon_id": {
+                    "type": "integer",
+                    "title": "Coupon Identifier",
+                    "description": "The ID from the associated coupon",
+                    "minimum": 1,
+                    "examples": [4]
+                }
+            }
+        }
+    },
+    "additionalProperties": true
+}

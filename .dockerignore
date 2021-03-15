@@ -1,0 +1,12 @@
+node_modules
+Dockerfile
+Dockerfile.dev
+.dockerignore
+.gitignore
+.env.example
+Procfile
+OpusMarket Routes.postman_collection.json
+db_tables.sql
+db.sql
+OpusMarket.png
+Readme.md

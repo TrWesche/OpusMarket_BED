@@ -1,0 +1,45 @@
+{
+  "name": "opusmarket-backend",
+  "version": "1.0.0",
+  "description": "Core database and api service for the opusmarket webapp.",
+  "main": "app.js",
+  "scripts": {
+    "test": "jest test"
+  },
+  "keywords": [
+    "opusmarket",
+    "backend",
+    "api"
+  ],
+  "author": "Trenton Wesche",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^0.21.0",
+    "bcrypt": "^5.0.0",
+    "body-parser": "^1.19.0",
+    "cookie-parser": "^1.4.5",
+    "cors": "^2.8.5",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "jsonschema": "^1.4.0",
+    "jsonwebtoken": "^8.5.1",
+    "luxon": "^1.25.0",
+    "morgan": "^1.10.0",
+    "pg": "^8.4.2",
+    "pug": "^3.0.0",
+    "square-connect": "^4.20201028.5",
+    "uuid": "^8.3.1"
+  },
+  "devDependencies": {
+    "supertest": "^6.0.1"
+  },
+  "jest" : {
+    "setupFiles": [
+      "<rootDir>/__tests__/config/jest.setEnvVars.js"
+    ],
+    "testEnvironment": "node",
+    "testPathIgnorePatterns": [
+        "<rootDir>/__tests__/config"
+    ]
+  }
+}

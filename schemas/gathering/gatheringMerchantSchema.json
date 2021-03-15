@@ -1,0 +1,38 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema",
+    "$id": "http://example.com/example.json",
+    "type": "object",
+    "title": "The root schema",
+    "description": "The root schema comprises the entire JSON document.",
+    "default": {},
+    "examples": [
+        {
+            "merchant_id": 110
+        }
+    ],
+    "required": [
+        "merchants"
+    ],
+    "properties": {
+        "merchants": {
+            "type": "array",
+            "items": {"$ref": "#/definitions/merchant"}
+        }
+    },
+    "definitions": {
+        "merchant": {
+            "type": "object",
+            "required": ["id"],
+            "properties": {
+                "id": {
+                    "$id": "#/properties/id",
+                    "type": "integer",
+                    "description": "The id of the merchant to be added",
+                    "default": 0,
+                    "examples": [110]
+                }
+            }
+        }
+    },
+    "additionalProperties": true
+}
