@@ -28,8 +28,13 @@ after_success:
   - echo "Preparing for push to AWS ECR"
   # aws ecr get-login depends on environment variables: AWS_ACCOUNT_ID, AWS_ACCESS_KEY_ID, and AWS_SECRET_ACCESS_KEY
   # to authenticate against the aws server.  These values should be provided in the travis environment variables.
+
   - aws configure set default.region ${ECS_REGION}
   - eval $(aws ecr get-login --no-include-email)
+
+  # Need to look into this version of the aws login & how to make it work properly
+  # - aws ecr get-login-password --region ${ECS_REGION} | docker login --username AWS --password-stdin ${AWS_ACCOUNT_ID}.dkr.ecr.${ECS_REGION}.amazonaws.com
+
   # Tag the docker image with the repository address appended
   - docker tag ${IMGNAME}:${IMGVERSION} ${AWS_ACCOUNT_ID}.dkr.ecr.${ECS_REGION}.amazonaws.com/${IMGNAME}:${IMGVERSION}
   # Push to AWS ECR
@@ -45,17 +50,17 @@ after_success:
 #   on:
 #     branch: main
 
+# https://devopstutorialspoint.com/deploy-your-dockerize-app-in-heroku-with-travis-ci-its-pretty-simple/
+
 deploy:
     provider: script
     script:
       # Push to Heroku
       - echo "Preparing for push to Heroku"
+      # Need to look into how to hide Heroku password using --password-stdin
       - docker login --username=${HEROKU_LOGIN} --password=${HEROKU_API_KEY} registry.heroku.com  #login to registry.heroku.com
-      - docker tag ${IMGNAME}:${IMGVERSION} registry.heroku.com/${HEROKU_APP}/${IMGNAME}:${IMGVERSION}
-      - docker push registry.heroku.com/${HEROKU_APP}/${IMGNAME}:${IMGVERSION}
-      - heroku container:release ${IMGNAME}:${IMGVERSION} --app ${HEROKU_APP}
-      # - docker tag ${IMGNAME}:${IMGVERSION} registry.heroku.com/${HEROKU_APP}/web
-      # - docker push registry.heroku.com/${HEROKU_APP}/web
-      # - heroku container:release web --app ${HEROKU_APP}
+      - docker tag ${IMGNAME}:${IMGVERSION} registry.heroku.com/${HEROKU_APP}/web
+      - docker push registry.heroku.com/${HEROKU_APP}/web
+      - heroku container:release web --app ${HEROKU_APP}
     on:
       branch: main
