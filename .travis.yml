@@ -50,9 +50,12 @@ deploy:
     script:
       # Push to Heroku
       - echo "Preparing for push to Heroku"
-      - docker login --username=${HEROKU_LOGIN} --password=${HEROKU_API_KEY} registry.heroku.com  #login to registry.heroku.com 
-      - docker tag ${IMGNAME}:${IMGVERSION} registry.heroku.com/${HEROKU_APP}/web
-      - docker push registry.heroku.com/${HEROKU_APP}/web
-      - heroku container:release web --app ${HEROKU_APP}
+      - docker login --username=${HEROKU_LOGIN} --password=${HEROKU_API_KEY} registry.heroku.com  #login to registry.heroku.com
+      - docker tag ${IMGNAME}:${IMGVERSION} registry.heroku.com/${HEROKU_APP}/${IMGNAME}:${IMGVERSION}
+      - docker push registry.heroku.com/${HEROKU_APP}/${IMGNAME}:${IMGVERSION}
+      - heroku container:release ${IMGNAME}:${IMGVERSION} --app ${HEROKU_APP}
+      # - docker tag ${IMGNAME}:${IMGVERSION} registry.heroku.com/${HEROKU_APP}/web
+      # - docker push registry.heroku.com/${HEROKU_APP}/web
+      # - heroku container:release web --app ${HEROKU_APP}
     on:
       branch: main
