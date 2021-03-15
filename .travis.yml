@@ -7,32 +7,52 @@ services:
   - docker
 
 before_script:
-  - echo "Nothing to Run Before Script"
+  # Install AWS CLI
+  - echo "Installing AWS CLI"
+  - pip install --user awscli
+  - export PATH=$PATH:$HOME/.local/bin
+
+  # Install Heroku CLI & Login
+  - echo "Installing Heroku CLI"
+  - npm install -g heroku
 
 script:
+  # Build the docker image
+  - docker image build -t ${IMGNAME}:${IMGVERSION} .
+
   - echo "No tests to Run"
 
 after_success:
-  # Install AWS CLI
+  # Push to AWS
   # http://haoliangyu.github.io/blog/2018/03/19/AWS-ECS-auto-deployment-with-Travis-CI/
   - echo "Preparing for push to AWS ECR"
-  - pip install --user awscli
   # aws ecr get-login depends on environment variables: AWS_ACCOUNT_ID, AWS_ACCESS_KEY_ID, and AWS_SECRET_ACCESS_KEY
   # to authenticate against the aws server.  These values should be provided in the travis environment variables.
-  - aws ecr get-login --no-include-email
-  # Build the docker image
-  - docker image build -t ${IMGNAME}:${IMGVERSION} .
+  - aws configure set default.region ${ECS_REGION}
+  - eval $(aws ecr get-login --no-include-email)
   # Tag the docker image with the repository address appended
-  - docker tag ${IMGNAME}:${IMGVERSION} ${AWS_REPO_ADDRESS}/${IMGNAME}:${IMGVERSION}
+  - docker tag ${IMGNAME}:${IMGVERSION} ${AWS_ACCOUNT_ID}.dkr.ecr.${ECS_REGION}.amazonaws.com/${IMGNAME}:${IMGVERSION}
   # Push to AWS ECR
-  - docker push ${AWS_REPO_ADDRESS}/${IMGNAME}:${IMGVERSION} 
+  - docker push ${AWS_ACCOUNT_ID}.dkr.ecr.${ECS_REGION}.amazonaws.com/${IMGNAME}:${IMGVERSION} 
 
 
 # Deploy to Heroku
+# deploy:
+#   provider: heroku
+#   api_key:
+#     main: ${HEROKU_API_KEY}
+#   app: opusmarket-be-docker
+#   on:
+#     branch: main
+
 deploy:
-  provider: heroku
-  api_key:
-    main: ${HEROKU_API_KEY}
-  app: opusmarket-be-docker
-  on:
-    branch: main
+    provider: script
+    script:
+      # Push to Heroku
+      - echo "Preparing for push to Heroku"
+      - docker login --username=${HEROKU_LOGIN} --password=${HEROKU_API_KEY} registry.heroku.com  #login to registry.heroku.com 
+      - docker tag ${IMGNAME}:${IMGVERSION} registry.heroku.com/${HEROKU_APP}/web
+      - docker push registry.heroku.com/${HEROKU_APP}/web
+      - heroku container:release web --app ${HEROKU_APP}
+    on:
+      branch: main
